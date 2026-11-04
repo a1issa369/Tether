@@ -33,13 +33,13 @@ Sanitizers: `cmake -S . -B build-san -DCMAKE_BUILD_TYPE=Debug -DTETHER_SANITIZE=
 
 ## Results
 
-One run of `scripts/demo.sh build 5` on a cloud container, over loopback with simulated loss in both directions:
+One run of `scripts/demo.sh build 5` on a MacBook Pro (Apple clang), over loopback with simulated loss in both directions:
 
 | Loss | Time | Retransmits | Fast | Timer | Hash |
 |---|---|---|---|---|---|
-| 0% | 0.05 s | 0 | 0 | 0 | match |
-| 5% | 0.36 s | 480 | 192 | 12 | match |
-| 20% | 41.6 s | 3339 | 525 | 115 | match |
+| 0% | 0.84 s | 0 | 0 | 0 | match |
+| 5% | 1.38 s | 472 | 189 | 14 | match |
+| 20% | 34.34 s | 2737 | 756 | 163 | match |
 
 These are loopback numbers with simulated loss, not a real network, and one run each. Treat them as a sanity check, not a benchmark.
 
@@ -55,6 +55,7 @@ These are loopback numbers with simulated loss, not a real network, and one run 
 - A test constructor failed under `-Werror` because of member initializer order.
 - My last UDP test was placeholder code that tested nothing; I rewrote it as a real "server restarts, client gets Rst" test.
 - The mutation check found two weak tests (see above). The Karn test was also too short at first: it stopped before the late ack came back, so the bad mutation survived until I let the network drain.
+- Clang (macOS) rejected an unused helper function that gcc ignored, so the first build on a Mac failed under `-Werror`. I removed the helper.
 - The first demo script hung: it used `kill 0` in a trap, which killed its own process group, and it parsed stats with the wrong format.
 
 ## Known limits
